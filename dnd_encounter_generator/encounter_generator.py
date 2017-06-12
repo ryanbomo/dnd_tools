@@ -6,110 +6,83 @@
 import math
 import random
 import csv
-from datetime import datetime
+import sys
+import os.path
 
-def main():
-        ## Main Function, called at start
-    title_text_art = '''  _____         _____    ______                             _            
- |  __ \  ___  |  __ \  |  ____|                           | |           
- | |  | |( _ ) | |  | | | |__   _ __   ___ ___  _   _ _ __ | |_ ___ _ __ 
- | |  | |/ _ \/\ |  | | |  __| | '_ \ / __/ _ \| | | | '_ \| __/ _ \ '__|
- | |__| | (_>  < |__| | | |____| | | | (_| (_) | |_| | | | | ||  __/ |   
- |_____/ \___/\/_____/  |______|_| |_|\___\___/ \__,_|_| |_|\__\___|_|
-                     v.1.0 by Ryan Bomalaski
-                  
-D&D Encounter is a quick python application for generating very simple D&D
-Encounters and loot tables using a CSV with my figure list. God I'm bored.'''+'\n'
-    print(title_text_art)
-    i = 1
+def main(encounter_difficulty, party_size,party_levels,csv_name,report_name):
 
-    ## Call encounter_generator until the user wants to quit
-    stop = False
-    while not stop:
-        encounter_generator(i)
-        i+=1
-        set_correct = str(input("Create another encounter? [y/n] "))
-        if(set_correct.lower()!='y'):
-            stop = True
-        
+    #bring in data
+    args = [encounter_difficulty, party_size,party_levels,csv_name,report_name]
 
-def encounter_generator(i):
-    user_input = 0
+    #data caries expectations, gotta check it
+    args = sanitize_input(args)
+    party_params = [args[0], args[1], args[2]]
 
-    ## Build dictionary of Monster Manual Creatures
-    mon_man_data = str(input("What is the name of CSV with creature data?"))
-    creature_dic = create_creature_dictionary(mon_man_data)
+    # create monster dictionary
+    creature_dic = create_creature_dictionary(args[3])
+    
+    # use party parameters to get allotted xp
+    xp_allotted = calc_encounter_xp(party_params)
 
-    ## get user input for party information
-    while user_input == 0:
-        print("\nThis is encounter number " + str(i))
-        report_name = str(input("What is the name of this encounter? "))
-        set_correct = 'n'
-        while (set_correct.lower()!='y'):
-            
-            # get party paramters from user
-            party_params = get_party_params()
-            
-            # use party parameters to get allotted xp
-            xp_allotted = calc_encounter_xp(party_params)
-
-            # check with user
-            print ('\n'+str(xp_allotted)+' is the allotted XP for the encounter.')
-            set_correct = str(input("Does this look correct? [y/n] "))
-            if(set_correct.lower()!='y'):
-                print("\nOK, let's try again")
-            else:
-                user_input = 1
-                
     # calc size of enemy party
     num_enemies = generate_encounter_size()
+
+    # calc xp multiplier due to enemy party size
+    xp_multiplier = determine_size_multiplier(num_enemies)
+
+    # generate enemy list
+    list_enemy_party = generate_enemy_party(num_enemies,xp_allotted,xp_multiplier,creature_dic)
         
     # create encounter
-    encounter1 = encounter(report_name,xp_allotted,num_enemies)
+    encounter1 = encounter(report_name,xp_allotted,num_enemies,xp_multiplier,list_enemy_party)
 
     #output to user
     print(encounter1.generate_encounter())
     
+    return
 
-# walk user through series of questions to get party parameters
-# might transition to C and switch to getopt, but not sure
-def get_party_params():
-    num_players = 0
-    list_player_levels = []
-    difficulty = 0
-    while num_players ==0:
-        try:
-            num_players = int(input("How many players are in your group? "))
-        except ValueError:
-            print("Somethign went wrong. Let's try again.")
-            print("Only enter a numerical value for the number of players.\n")
+# method for sanitizing input based on expectations
+def sanitize_input(args):
+    sanitary_arg = []
+    difficulty = args[0]
+    size = args[1]
+    levels = args[2]
+    csv_name = args[3]
+    report_name = args[4]
 
-    for i in range(num_players):
-        level_unset = True
-        while level_unset:
-            try:
-                player_level = int(input("What is the level of character number " + str(i+1)+"? "))
-                level_unset = False
-                if player_level >20:
-                    player_level = 20
-                if player_level < 0:
-                    player_level = 0
-                list_player_levels.append(player_level)
-            except ValueError:
-                print("Something went wrong. Let's try again.")
-                print("Be sure to enter only the number of levels.\n")
-            
-    while difficulty ==0:
-        try:
-            difficulty = int(input("On scale of 1 to 4, how hard is the enouncter? "))
-        except ValueError:
-            print("Somethign went wrong. Let's try again.")
-            print("Only enter a numerical value for the difficulty.\n")
-        if difficulty > 4:
-            difficulty = 4
-    party_params = [difficulty,num_players,list_player_levels]
-    return party_params
+    # check difficulty
+    if difficulty < 1:
+        difficulty = 1
+    elif difficulty > 4:
+        difficulty = 4
+    sanitary_arg.append(difficulty)
 
+    #check size
+    if size != len(levels):
+        print("Issue with party player party size!")
+        size = len(levels)
+    sanitary_arg.append(size)
+
+    #check levels
+    for i in (range(len(levels))):
+        if levels[i] > 20:
+            levels[i] = 20
+        elif levels[i] < 0:
+            levels[i] = 0
+    sanitary_arg.append(levels)
+
+    #check csv_name
+    if not os.path.isfile(csv_name + ".csv"):
+        print("Error with csv filename")
+        print(csv_name + ".csv cannot be found.")
+        sys.exit()
+    sanitary_arg.append(csv_name)
+
+    
+    #check report_name
+    sanitary_arg.append(report_name)
+
+    return sanitary_arg
 
 # Calculate the encounter XP
 # Uses magic numbers in tables, due to WotC not having an obvious algorithm for calculating these values
@@ -195,24 +168,120 @@ def generate_encounter_size():
         num_enemies = 1
 
     return num_enemies
+
+def determine_size_multiplier(num_enemies):
+        if num_enemies == 1:
+            multiplier = 1.0
+        elif num_enemies == 2:
+            multiplier = 1.5
+        elif 3<=num_enemies<=6:
+            multiplier = 2.0
+        elif 7<=num_enemies<=10:
+            multiplier = 2.5
+        elif 11<=num_enemies<=14:
+            multiplier = 3
+        else:
+            multiplier = 4
+        return multiplier
+
+def generate_enemy_party(num_enemies,allotted_xp,xp_multiplier,enemy_dictionary):
+    return ["t","e","s","t"]
+    
     
 
 class encounter:
-    def __init__(self, encounter_name,allotted_xp,size):
+    def __init__(self, encounter_name,allotted_xp,size,xp_multiplier,enemy_list):
         self.encounter_name = encounter_name
         self.xp_allotted = allotted_xp
         self.num_enemies = size
+        self.xp_multiplier = xp_multiplier
+        self.enemy_list = enemy_list
 
     def generate_encounter(self):
-        output = "Num enemies - " + str(self.num_enemies) + " :: XP Allotted - " + str(self.xp_allotted) + " :: Enounter Name - " +self.encounter_name + " :: Multipler - " + str(self.determine_size_multiplier())
+        output = "Num enemies - " + str(self.num_enemies)
+        output += " :: XP Allotted - " + str(self.xp_allotted)
+        output += " :: Enounter Name - " +self.encounter_name
+        output += " :: Multipler - " + str(self.xp_multiplier)
+        output += " :: Actual XP to Spend - " +str(int(self.determine_spendable_xp()))
+        output += " :: Enemy List - " + str(self.enemy_list)
+
         return output
 
-    def determine_size_multiplier(self):
-        if self.num_enemies == 1:
-            multiplier = 1.0
-        elif self.num_enemies == 2:
-            multiplier = 1.5
-        else:
-            multiplier = 2.0
-        return multiplier
+    def determine_spendable_xp(self):
+        spendable_xp = float(self.xp_allotted)/self.xp_multiplier
+        return spendable_xp
 
+
+
+#
+#
+#       UI STUFF I HERE
+#
+# optoinal UI elment, not necessary for function
+# allows for smooth operation if you don't know format for main()
+def ui():
+    title_text_art = '''  _____         _____    ______                             _            
+ |  __ \  ___  |  __ \  |  ____|                           | |           
+ | |  | |( _ ) | |  | | | |__   _ __   ___ ___  _   _ _ __ | |_ ___ _ __ 
+ | |  | |/ _ \/\ |  | | |  __| | '_ \ / __/ _ \| | | | '_ \| __/ _ \ '__|
+ | |__| | (_>  < |__| | | |____| | | | (_| (_) | |_| | | | | ||  __/ |   
+ |_____/ \___/\/_____/  |______|_| |_|\___\___/ \__,_|_| |_|\__\___|_|
+                     v.1.0 by Ryan Bomalaski
+                  
+D&D Encounter is a quick python application for generating very simple D&D
+Encounters and loot tables using a CSV with my figure list. God I'm bored.'''+'\n'
+    print(title_text_art)
+    i = 1
+    ## Build dictionary of Monster Manual Creatures
+    mon_man_data = str(input("What is the name of CSV with creature data?"))
+
+    ## Create encounters until the user wants to quit
+    stop = False
+    while not stop:
+        report_name = str(input("What is the name of this encounter? "))
+        party_params = get_party_params()
+        main(party_params[0], party_params[1], party_params[2],mon_man_data,report_name)
+        i+=1
+        set_correct = str(input("Create another encounter? [y/n] "))
+        if(set_correct.lower()!='y'):
+            stop = True
+    
+
+# walk user through series of questions to get party parameters
+# might transition to C and switch to getopt, but not sure
+def get_party_params():
+    num_players = 0
+    list_player_levels = []
+    difficulty = 0
+    while num_players ==0:
+        try:
+            num_players = int(input("How many players are in your group? "))
+        except ValueError:
+            print("Somethign went wrong. Let's try again.")
+            print("Only enter a numerical value for the number of players.\n")
+
+    for i in range(num_players):
+        level_unset = True
+        while level_unset:
+            try:
+                player_level = int(input("What is the level of character number " + str(i+1)+"? "))
+                level_unset = False
+                if player_level >20:
+                    player_level = 20
+                if player_level < 0:
+                    player_level = 0
+                list_player_levels.append(player_level)
+            except ValueError:
+                print("Something went wrong. Let's try again.")
+                print("Be sure to enter only the number of levels.\n")
+            
+    while difficulty ==0:
+        try:
+            difficulty = int(input("On scale of 1 to 4, how hard is the enouncter? "))
+        except ValueError:
+            print("Somethign went wrong. Let's try again.")
+            print("Only enter a numerical value for the difficulty.\n")
+        if difficulty > 4:
+            difficulty = 4
+    party_params = [difficulty,num_players,list_player_levels]
+    return party_params
