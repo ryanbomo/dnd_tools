@@ -245,12 +245,15 @@ class encounter:
         self.enemy_list = enemy_list
 
     def generate_encounter(self):
-        output = "Num enemies - " + str(self.num_enemies)
-        output += " :: XP Allotted range is - " + str(self.allotted_xp[0])+ "-"+str(self.allotted_xp[1])
-        output += " :: Enounter Name - " +self.encounter_name
-        output += " :: Multipler - " + str(self.xp_multiplier)
-        output += " :: Actual XP to spend is between - " +str(int(self.determine_spendable_xp()[0]))+"-"+str(int(self.determine_spendable_xp()[1]))
-        output += " :: Enemy List - " + str(self.enemy_list)
+        output = "Enounter Name - " +self.encounter_name
+        output += "\nNum enemies - " + str(self.num_enemies)
+        output += "\nSize Multipler - " + str(self.xp_multiplier)
+        output += "\nParty Size"
+        output += "\nParty Info"
+        output += "\nXP Allotted range is - " + str(self.allotted_xp[0])+ "-"+str(self.allotted_xp[1])
+        output += "\nActual XP to spend is between - " +str(int(self.determine_spendable_xp()[0]))+"-"+str(int(self.determine_spendable_xp()[1]))
+        output += "\nEnemy List - " + str(self.enemy_list)
+        output += "\nEncounter XP - " + "TEST" + "(TEST per player)\n"
 
         return output
 
