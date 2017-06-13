@@ -34,7 +34,7 @@ def main(encounter_difficulty, party_size,party_levels,csv_name,report_name):
     list_enemy_party = generate_enemy_party(num_enemies,xp_allotted,xp_multiplier,creature_dic)
         
     # create encounter
-    encounter1 = encounter(report_name,xp_allotted,num_enemies,xp_multiplier,list_enemy_party)
+    encounter1 = encounter(report_name,xp_allotted,num_enemies,xp_multiplier,list_enemy_party,party_params[2],creature_dic)
 
     #output to user
     print(encounter1.generate_encounter())
@@ -199,35 +199,42 @@ def generate_enemy_party(num_enemies,allotted_xp,xp_multiplier,enemy_dictionary)
     const_top = allotted_xp[1]
     const_spendable_bottom = int(const_bottom/xp_multiplier)
     const_spendable_top = int(const_top/xp_multiplier)
-    print(const_spendable_bottom)
-    print(const_spendable_top)
-    print(allotted_xp)
-    print(num_enemies)
+    print("\nGenerating enemy party with " + str(num_enemies)+ " enemies.")
+    print("If I seem to hang, escape out.  This means your parameters don't work.")
     while not passed_check:
+        num_slots = num_enemies
         spent_xp = 0
         enemy_team = []
         spendable_xp = int(const_top/xp_multiplier)
         
         # Currently grabs creatures at random, so you get some interesting groups
-        for i in range(num_enemies):
+        #
+        while True:
             acceptable = False
             while not acceptable:
+                
+                # Grab random Monster
                 rand_key = random.choice(list(enemy_dictionary.keys()))
-                print("Spendable XP is: " +str(spendable_xp))
-                spendable_xp -= int(enemy_dictionary[rand_key])
-                print("Rand key is: "+rand_key)
-                print("Enemy is " +enemy_dictionary[rand_key])
-                print("Spent XP is: " + str(spent_xp))
-                print("Team is: ")
-                print(enemy_team)
-                print("\n")
-                if spendable_xp>=(10*(num_enemies-(i+1))):
-                    enemy_team.append(rand_key)
-                    spent_xp += int(enemy_dictionary[rand_key])
+                
+                # Grab random number of those monsters to try
+                rand_num = random.randint(1,num_slots)
+                
+                # spend the XP for those monsters
+                for i in range(rand_num):
+                    spendable_xp -= int(enemy_dictionary[rand_key])
+                    
+                #check to make sure you can afford to spend that amount
+                if spendable_xp>=(10*(num_slots-rand_num)):
+                    for i in range(rand_num):
+                        enemy_team.append(rand_key)
+                        spent_xp += int(enemy_dictionary[rand_key])
+                        num_slots -= 1
                     acceptable = True
                 else:
-                    spendable_xp += int(enemy_dictionary[rand_key])
-
+                    for i in range(rand_num):
+                        spendable_xp += int(enemy_dictionary[rand_key])
+            if num_slots<=0:
+                break
         ## Make sure we are close enough to XP cap and at the right size
         ## If not, try again
         if (const_spendable_bottom < spent_xp <= const_spendable_top) and (num_enemies == len(enemy_team)):
@@ -238,23 +245,26 @@ def generate_enemy_party(num_enemies,allotted_xp,xp_multiplier,enemy_dictionary)
     
 
 class encounter:
-    def __init__(self, encounter_name,allotted_xp,size,xp_multiplier,enemy_list):
+    def __init__(self, encounter_name,allotted_xp,size,xp_multiplier,enemy_list,party_levels,creature_dic):
         self.encounter_name = encounter_name
         self.allotted_xp = allotted_xp
         self.num_enemies = size
         self.xp_multiplier = xp_multiplier
         self.enemy_list = enemy_list
+        self.party_levels = party_levels
+        self.creature_dic = creature_dic
 
     def generate_encounter(self):
-        output = "Enounter Name - " +self.encounter_name
-        output += "\nNum enemies - " + str(self.num_enemies)
-        output += "\nSize Multipler - " + str(self.xp_multiplier)
-        output += "\nParty Size"
-        output += "\nParty Info"
-        output += "\nXP Allotted range is - " + str(self.allotted_xp[0])+ "-"+str(self.allotted_xp[1])
-        output += "\nActual XP to spend is between - " +str(int(self.determine_spendable_xp()[0]))+"-"+str(int(self.determine_spendable_xp()[1]))
+        output = "\nEnounter Name - " +self.encounter_name
+        output += "\nParty Size - " + str(self.get_party_size())
+        output += "\nParty Info -"
+        for i in range(len(self.party_levels)):
+            output+= " " + str(self.party_levels[i])
+        output += "\nNumber of enemies - " + str(self.num_enemies)
+        output += " and the Size Multipler - " + str(self.xp_multiplier)
+        output += "\nCalculated XP Range is - " +str(int(self.determine_spendable_xp()[0]))+"-"+str(int(self.determine_spendable_xp()[1]))
         output += "\nEnemy List - " + str(self.enemy_list)
-        output += "\nEncounter XP - " + "TEST" + "(TEST per player)\n"
+        output += "\nEncounter XP - " + str(self.get_actual_xp()) + " (" + str(self.get_actual_xp()/len(self.party_levels))+" per player)\n"
 
         return output
 
@@ -265,6 +275,17 @@ class encounter:
         spendable_xp_top = float(top)/self.xp_multiplier
         spendable_xp = [spendable_xp_bottom,spendable_xp_top]
         return spendable_xp
+
+    def get_party_size(self):
+        party_size = len(self.party_levels)
+        return party_size
+
+    def get_actual_xp(self):
+        xp = 0
+        for i in range(len(self.enemy_list)):
+            xp += int(self.creature_dic[self.enemy_list[i]])
+        return xp
+            
 
 
 
@@ -281,14 +302,15 @@ def ui():
  | |  | |/ _ \/\ |  | | |  __| | '_ \ / __/ _ \| | | | '_ \| __/ _ \ '__|
  | |__| | (_>  < |__| | | |____| | | | (_| (_) | |_| | | | | ||  __/ |   
  |_____/ \___/\/_____/  |______|_| |_|\___\___/ \__,_|_| |_|\__\___|_|
-                     v.1.1 by Ryan Bomalaski
+                     v.1.3 by Ryan Bomalaski
                   
 D&D Encounter is a quick python application for generating very simple D&D
-Encounters and loot tables using a CSV with my figure list. God I'm bored.'''+'\n'
+Encounters. It takes a CSV with two columns (Creature, XP) and creates encounters.
+God I'm bored.'''+'\n'
     print(title_text_art)
     i = 1
     ## Build dictionary of Monster Manual Creatures
-    mon_man_data = str(input("What is the name of CSV with creature data?"))
+    mon_man_data = str(input("What is the name of CSV with creature data? "))
 
     ## Create encounters until the user wants to quit
     stop = False
@@ -312,7 +334,7 @@ def get_party_params():
         try:
             num_players = int(input("How many players are in your group? "))
         except ValueError:
-            print("Somethign went wrong. Let's try again.")
+            print("Something went wrong. Let's try again.")
             print("Only enter a numerical value for the number of players.\n")
 
     for i in range(num_players):
@@ -332,9 +354,9 @@ def get_party_params():
             
     while difficulty ==0:
         try:
-            difficulty = int(input("On scale of 1 to 4, how hard is the enouncter? "))
+            difficulty = int(input("On scale of 1 to 4, how hard is the encounter? "))
         except ValueError:
-            print("Somethign went wrong. Let's try again.")
+            print("Something went wrong. Let's try again.")
             print("Only enter a numerical value for the difficulty.\n")
         if difficulty > 4:
             difficulty = 4
