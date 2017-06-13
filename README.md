@@ -53,4 +53,5 @@ Below is an example output for iteration 1:
 ### Future Features
   * Cluster Enemy Generation - instead of grabbing random singletons, implement a way to attempt groups
   * Link enemies based on themes or tags - Allow for more flavorful group creation
+  * Ensure set up is actually possible - some setups don't work. For example, there is no possibly way to create a 15 creature encounter that is easy for 2 level 1 players. Need a way to weed these out.
 
