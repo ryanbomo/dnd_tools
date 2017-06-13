@@ -61,3 +61,28 @@ Below is an example output for iteration 1.0:
   * Ensure set up is actually possible - some setups don't work. For example, there is no possibly way to create a 15 creature encounter that is easy for 2 level 1 players. Need a way to weed these out.
   * The DMG has player party size considerations that I would like to implement \[DMG 83\]
 
+## Map Generator
+
+Still a WIP. Once a preliminary version is working, this will be uploaded
+
+### Future Features
+  * Procedurally Generate Maps using different types - Cave, Castle, Maze, Forest, etc.
+  * Export maps to PDF (both true to size 1" grids, and page fitting for documentation)
+  * Optionally Link with Encounter Generator and Loot Generator
+
+## Loot Generator
+
+WIP. Once a preliminary version is working, this will be uploaded. But it is pretty much exactly what it sounds like. Using the tables from the DMG, I am implenting a loot roller.
+
+### Future Features
+  * Randomly Generate Loot from DMG loot tables
+  * Seed loot generation so that it is creature/encounter appropriate
+
+## BBEG Generator
+Big Bad Evil Guy Generator. I want to make a quick "quirkey bad guy" creator. This is just a small thing to work on sometimes. This idea may get chopped.
+
+### Future Features
+  * Using a predetermined list of quirks and traits, make a bad guy
+  * Will do race, gender, age, stats, motivation, small back story, quirks
+  * Initially randomly assigned, but I would like to make a way for them to link naturally as well (i.e. a quirk of wanting to sound smart despite being fairly dumb would not be assigned to a high intelligence dude).
+
