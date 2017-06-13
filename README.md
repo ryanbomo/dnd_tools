@@ -27,5 +27,6 @@ Below are the projected features for the DND Encounter Tool
 
 Does all of the above, but right now creating the encounter is completely random. This results in some weird combos, like 2 enemy encounter with a Mindflayer and a Baboon (which is going to be used in my current campaign, because why not).
 
-
+Below is an example output for iteration 1:
+![Alt text](https://github.com/ryanbomo/dnd_tools/blob/master/dnd_encounter_generator/sample_output/best_encounter.png?raw=true)
 
