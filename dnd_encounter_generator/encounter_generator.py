@@ -280,7 +280,7 @@ def ui():
  | |  | |/ _ \/\ |  | | |  __| | '_ \ / __/ _ \| | | | '_ \| __/ _ \ '__|
  | |__| | (_>  < |__| | | |____| | | | (_| (_) | |_| | | | | ||  __/ |   
  |_____/ \___/\/_____/  |______|_| |_|\___\___/ \__,_|_| |_|\__\___|_|
-                     v.1.0 by Ryan Bomalaski
+                     v.1.1 by Ryan Bomalaski
                   
 D&D Encounter is a quick python application for generating very simple D&D
 Encounters and loot tables using a CSV with my figure list. God I'm bored.'''+'\n'
