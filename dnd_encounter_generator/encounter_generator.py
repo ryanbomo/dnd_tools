@@ -51,6 +51,8 @@ def sanitize_input(args):
     report_name = args[4]
 
     # check difficulty
+    ##### CURRENTLY ADDING 1 to fix assumption on difficulties, which means that Deadly actually creates a hard encounter
+    difficulty = difficulty + 1
     if difficulty < 1:
         difficulty = 1
     elif difficulty > 4:
