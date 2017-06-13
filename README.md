@@ -23,3 +23,9 @@ Below are the projected features for the DND Encounter Tool
   * Full CSV of both DMG and Yolo's monster's books
   * CSV to contain links between monsters to keep encounters flavorful
 
+### Current Iteration
+
+Does all of the above, but right now creating the encounter is completely random. This results in some weird combos, like 2 enemy encounter with a Mindflayer and a Baboon (which is going to be used in my current campaign, because why not).
+
+
+
