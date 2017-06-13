@@ -14,7 +14,7 @@ Currently, it then totals the experience that is allotted to that difficulty lev
 
 ### Current Features
 
-Below are the projected features for the DND Encounter Tool
+Below are the curent features for the DND Encounter Tool
 
   * Take User Input
   * Calculate total Allotted Encounter XP
@@ -22,6 +22,7 @@ Below are the projected features for the DND Encounter Tool
   * Purchase enemies to fill enemy team based on XP buy system
   * Full CSV of both DMG
   * Use accurate range to figure out encounter
+  * Create more homogenous groups
 
 ### User Manual
 
@@ -44,19 +45,16 @@ main(*encounter\_difficulty*, *party\_size*,*party\_levels*,*csv\_name*,*report\
 Currently main() will give an output based on the party. This will be updated in the future to simply create a .txt file with the encounter information. The idea is to have no actual input or output from anything if ui() is not called.
 
 
-### Current Version (1.1)
+### Current Version (1.3)
 
 Does all of the above, but right now creating the encounter is completely random. This results in some weird combos, like 2 enemy encounter with a Mindflayer and a Baboon (which is going to be used in my current campaign, because why not).
 
-Below is an example output for iteration 1.1
-![Alt text](https://github.com/ryanbomo/dnd_tools/blob/master/dnd_encounter_generator/sample_output/version_1_1.png?raw=true)
+Below is the output for the current version (1.3)
+![Alt text](https://github.com/ryanbomo/dnd_tools/blob/master/dnd_encounter_generator/sample_output/version_1_3.png?raw=true)
 
-
-Below is an example output for iteration 1.0:
-![Alt text](https://github.com/ryanbomo/dnd_tools/blob/master/dnd_encounter_generator/sample_output/best_encounter.png?raw=true)
+Older outputs are in the sample output folders
 
 ### Future Features
-  * Cluster Enemy Generation - instead of grabbing random singletons, implement a way to attempt groups
   * Link enemies based on themes or tags - Allow for more flavorful group creation
   * Ensure set up is actually possible - some setups don't work. For example, there is no possibly way to create a 15 creature encounter that is easy for 2 level 1 players. Need a way to weed these out.
   * The DMG has player party size considerations that I would like to implement \[DMG 83\]

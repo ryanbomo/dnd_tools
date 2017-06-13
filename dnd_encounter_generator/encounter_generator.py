@@ -34,7 +34,7 @@ def main(encounter_difficulty, party_size,party_levels,csv_name,report_name):
     list_enemy_party = generate_enemy_party(num_enemies,xp_allotted,xp_multiplier,creature_dic)
         
     # create encounter
-    encounter1 = encounter(report_name,xp_allotted,num_enemies,xp_multiplier,list_enemy_party,party_params[2],creature_dic)
+    encounter1 = encounter(report_name,list_enemy_party,party_params[2],creature_dic,party_params[0])
 
     #output to user
     print(encounter1.generate_encounter())
@@ -245,36 +245,28 @@ def generate_enemy_party(num_enemies,allotted_xp,xp_multiplier,enemy_dictionary)
     
 
 class encounter:
-    def __init__(self, encounter_name,allotted_xp,size,xp_multiplier,enemy_list,party_levels,creature_dic):
+    def __init__(self, encounter_name,enemy_list,party_levels,creature_dic,difficulty):
         self.encounter_name = encounter_name
-        self.allotted_xp = allotted_xp
-        self.num_enemies = size
-        self.xp_multiplier = xp_multiplier
         self.enemy_list = enemy_list
         self.party_levels = party_levels
         self.creature_dic = creature_dic
+        self.difficulty = difficulty
 
     def generate_encounter(self):
-        output = "\nEnounter Name - " +self.encounter_name
+        output = "\nEncounter Name - " +self.encounter_name
         output += "\nParty Size - " + str(self.get_party_size())
-        output += "\nParty Info -"
+        output += "\nPlayer Levels -"
         for i in range(len(self.party_levels)):
             output+= " " + str(self.party_levels[i])
-        output += "\nNumber of enemies - " + str(self.num_enemies)
-        output += " and the Size Multipler - " + str(self.xp_multiplier)
-        output += "\nCalculated XP Range is - " +str(int(self.determine_spendable_xp()[0]))+"-"+str(int(self.determine_spendable_xp()[1]))
-        output += "\nEnemy List - " + str(self.enemy_list)
-        output += "\nEncounter XP - " + str(self.get_actual_xp()) + " (" + str(self.get_actual_xp()/len(self.party_levels))+" per player)\n"
-
+        output += "\nEnemy List - "
+        for i in range(len(self.enemy_list)):
+            output += self.enemy_list[i]
+            if i != len(self.enemy_list)-1:
+                output += ", "
+        output += "\nEncounter XP - " + str(self.get_actual_xp()) + " (" + str(self.get_actual_xp()/len(self.party_levels))+" per player)"
+        output += "\nEncounter Difficulty - " + self.get_difficulty()
         return output
 
-    def determine_spendable_xp(self):
-        bottom = self.allotted_xp[0]
-        top = self.allotted_xp[1]
-        spendable_xp_bottom = float(bottom)/self.xp_multiplier
-        spendable_xp_top = float(top)/self.xp_multiplier
-        spendable_xp = [spendable_xp_bottom,spendable_xp_top]
-        return spendable_xp
 
     def get_party_size(self):
         party_size = len(self.party_levels)
@@ -285,6 +277,18 @@ class encounter:
         for i in range(len(self.enemy_list)):
             xp += int(self.creature_dic[self.enemy_list[i]])
         return xp
+
+    def get_difficulty(self):
+        if self.difficulty == 1:
+            return "Easy"
+        elif self.difficulty == 2:
+            return "Medium"
+        elif self.difficulty == 3:
+            return "Hard"
+        elif self.difficulty == 4:
+            return "Deadly"
+        else:
+            return "Unkown"
             
 
 
@@ -305,8 +309,8 @@ def ui():
                      v.1.3 by Ryan Bomalaski
                   
 D&D Encounter is a quick python application for generating very simple D&D
-Encounters. It takes a CSV with two columns (Creature, XP) and creates encounters.
-God I'm bored.'''+'\n'
+Encounters. It takes a CSV with two columns (Creature, XP) and creates
+encounters.'''+'\n'
     print(title_text_art)
     i = 1
     ## Build dictionary of Monster Manual Creatures
@@ -317,9 +321,13 @@ God I'm bored.'''+'\n'
     while not stop:
         report_name = str(input("What is the name of this encounter? "))
         party_params = get_party_params()
-        main(party_params[0], party_params[1], party_params[2],mon_man_data,report_name)
-        i+=1
-        set_correct = str(input("Create another encounter? [y/n] "))
+        good = False
+        while not good:
+            main(party_params[0], party_params[1], party_params[2],mon_man_data,report_name)
+            try_again = str(input("\nReroll? [y/n] "))
+            if try_again != 'y':
+                good = True
+        set_correct = str(input("\nCreate another encounter? [y/n] "))
         if(set_correct.lower()!='y'):
             stop = True
     
