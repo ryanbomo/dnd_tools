@@ -23,6 +23,7 @@ Below are the curent features for the DND Encounter Tool
   * Full CSV of both DMG
   * Use accurate range to figure out encounter
   * Create more homogenous groups
+  * Quick encounter reroll
 
 ### User Manual
 
@@ -49,7 +50,7 @@ Currently main() will give an output based on the party. This will be updated in
 
 Does all of the above, but right now creating the encounter is completely random. This results in some weird combos, like 2 enemy encounter with a Mindflayer and a Baboon (which is going to be used in my current campaign, because why not).
 
-Below is the output for the current version (1.3)
+Below is the output for v1.3
 ![Alt text](https://github.com/ryanbomo/dnd_tools/blob/master/dnd_encounter_generator/sample_output/version_1_3.png?raw=true)
 
 Older outputs are in the sample output folders
