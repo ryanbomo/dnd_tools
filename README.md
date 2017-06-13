@@ -21,6 +21,7 @@ Below are the projected features for the DND Encounter Tool
   * Generate Number of Enemy Combatants
   * Purchase enemies to fill enemy team based on XP buy system
   * Full CSV of both DMG
+  * Use accurate range to figure out encounter
 
 ### User Manual
 
@@ -43,11 +44,15 @@ main(*encounter\_difficulty*, *party\_size*,*party\_levels*,*csv\_name*,*report\
 Currently main() will give an output based on the party. This will be updated in the future to simply create a .txt file with the encounter information. The idea is to have no actual input or output from anything if ui() is not called.
 
 
-### Current Version (1.0)
+### Current Version (1.1)
 
 Does all of the above, but right now creating the encounter is completely random. This results in some weird combos, like 2 enemy encounter with a Mindflayer and a Baboon (which is going to be used in my current campaign, because why not).
 
-Below is an example output for iteration 1:
+Below is an example output for iteration 1.1
+![Alt text](https://github.com/ryanbomo/dnd_tools/blob/master/dnd_encounter_generator/sample_output/version_1_1.png?raw=true)
+
+
+Below is an example output for iteration 1.0:
 ![Alt text](https://github.com/ryanbomo/dnd_tools/blob/master/dnd_encounter_generator/sample_output/best_encounter.png?raw=true)
 
 ### Future Features
@@ -55,5 +60,4 @@ Below is an example output for iteration 1:
   * Link enemies based on themes or tags - Allow for more flavorful group creation
   * Ensure set up is actually possible - some setups don't work. For example, there is no possibly way to create a 15 creature encounter that is easy for 2 level 1 players. Need a way to weed these out.
   * The DMG has player party size considerations that I would like to implement \[DMG 83\]
-  * Current implementation isn't correct per the DMG. The table from DMG 82 is implemented as if the values listed are the ceiling for that encounter. The underlying assumption was that something falling between the numbers for Easy and Medium was a Medium encounter. In reality, this is an Easy encounter. This is a MAJOR flaw, as we are not hitting the appropriate user function. Current underthe hood fix is to increase the difficulty the user puts in by 1. This means that deadly encounters don't work, and as a result this is a very temporary fix. This fix is done in the sanitize_input() function.
 

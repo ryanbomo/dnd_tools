@@ -51,8 +51,6 @@ def sanitize_input(args):
     report_name = args[4]
 
     # check difficulty
-    ##### CURRENTLY ADDING 1 to fix assumption on difficulties, which means that Deadly actually creates a hard encounter
-    difficulty = difficulty + 1
     if difficulty < 1:
         difficulty = 1
     elif difficulty > 4:
@@ -89,9 +87,11 @@ def sanitize_input(args):
 # Calculate the encounter XP
 # Uses magic numbers in tables, due to WotC not having an obvious algorithm for calculating these values
 def calc_encounter_xp(party_params):
-    allotted_xp = 0
-    difficulty = party_params[0]-1
+    allotted_xp_bottom = 0
+    allotted_xp_ceiling = 0
+    difficulty_index = party_params[0]-1
     list_player_levels = party_params[2]
+    list_floor_ceiling = []
 
     #below values from Dungeon Master's Guide
     list_easy = [0,25, 50,75,125,250,300,350,450,550,600,800,1000,1100,1250,1400,1600,2000,2100,2400,2800]
@@ -101,8 +101,13 @@ def calc_encounter_xp(party_params):
     difficulty_matrix = [list_easy,list_medium,list_hard,list_deadly]
 
     for i in list_player_levels:
-        allotted_xp = allotted_xp + difficulty_matrix[difficulty][i]
-    return allotted_xp
+        allotted_xp_bottom += difficulty_matrix[difficulty_index][i]
+        if difficulty_index >=3:
+            allotted_xp_ceiling += (difficulty_matrix[difficulty_index][i])*1.2
+        else:
+            allotted_xp_ceiling += difficulty_matrix[difficulty_index+1][i]
+    list_floor_ceiling = [allotted_xp_bottom, allotted_xp_ceiling]
+    return list_floor_ceiling
 
 # Creates a dictionray based on CSV file with creatures and XP values
 # Data agnostic, so users can use their own creatures and update CSV file as new creatures
@@ -189,14 +194,18 @@ def determine_size_multiplier(num_enemies):
 
 def generate_enemy_party(num_enemies,allotted_xp,xp_multiplier,enemy_dictionary):
     passed_check = False
-    const_spendable_xp = int(allotted_xp/xp_multiplier)
-    print(const_spendable_xp)
+    const_bottom = allotted_xp[0]
+    const_top = allotted_xp[1]
+    const_spendable_bottom = int(const_bottom/xp_multiplier)
+    const_spendable_top = int(const_top/xp_multiplier)
+    print(const_spendable_bottom)
+    print(const_spendable_top)
     print(allotted_xp)
     print(num_enemies)
     while not passed_check:
         spent_xp = 0
         enemy_team = []
-        spendable_xp = int(allotted_xp/xp_multiplier)
+        spendable_xp = int(const_top/xp_multiplier)
         
         # Currently grabs creatures at random, so you get some interesting groups
         for i in range(num_enemies):
@@ -211,7 +220,7 @@ def generate_enemy_party(num_enemies,allotted_xp,xp_multiplier,enemy_dictionary)
                 print("Team is: ")
                 print(enemy_team)
                 print("\n")
-                if spendable_xp>=(10*(num_enemies-i)):
+                if spendable_xp>=(10*(num_enemies-(i+1))):
                     enemy_team.append(rand_key)
                     spent_xp += int(enemy_dictionary[rand_key])
                     acceptable = True
@@ -220,7 +229,7 @@ def generate_enemy_party(num_enemies,allotted_xp,xp_multiplier,enemy_dictionary)
 
         ## Make sure we are close enough to XP cap and at the right size
         ## If not, try again
-        if (spent_xp > (.8*const_spendable_xp)) and (num_enemies == len(enemy_team)):
+        if (const_spendable_bottom < spent_xp <= const_spendable_top) and (num_enemies == len(enemy_team)):
             passed_check = True
     
     return enemy_team
@@ -230,23 +239,27 @@ def generate_enemy_party(num_enemies,allotted_xp,xp_multiplier,enemy_dictionary)
 class encounter:
     def __init__(self, encounter_name,allotted_xp,size,xp_multiplier,enemy_list):
         self.encounter_name = encounter_name
-        self.xp_allotted = allotted_xp
+        self.allotted_xp = allotted_xp
         self.num_enemies = size
         self.xp_multiplier = xp_multiplier
         self.enemy_list = enemy_list
 
     def generate_encounter(self):
         output = "Num enemies - " + str(self.num_enemies)
-        output += " :: XP Allotted - " + str(self.xp_allotted)
+        output += " :: XP Allotted range is - " + str(self.allotted_xp[0])+ "-"+str(self.allotted_xp[1])
         output += " :: Enounter Name - " +self.encounter_name
         output += " :: Multipler - " + str(self.xp_multiplier)
-        output += " :: Actual XP to Spend - " +str(int(self.determine_spendable_xp()))
+        output += " :: Actual XP to spend is between - " +str(int(self.determine_spendable_xp()[0]))+"-"+str(int(self.determine_spendable_xp()[1]))
         output += " :: Enemy List - " + str(self.enemy_list)
 
         return output
 
     def determine_spendable_xp(self):
-        spendable_xp = float(self.xp_allotted)/self.xp_multiplier
+        bottom = self.allotted_xp[0]
+        top = self.allotted_xp[1]
+        spendable_xp_bottom = float(bottom)/self.xp_multiplier
+        spendable_xp_top = float(top)/self.xp_multiplier
+        spendable_xp = [spendable_xp_bottom,spendable_xp_top]
         return spendable_xp
 
 
