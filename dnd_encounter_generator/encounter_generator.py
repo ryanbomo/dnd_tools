@@ -215,20 +215,6 @@ def generate_enemy_party(num_enemies,allotted_xp,xp_multiplier,enemy_dictionary)
                     acceptable = True
                 else:
                     spendable_xp += int(enemy_dictionary[rand_key])
-                    
-
-
-                    ##For each creature in number of slots:
-                    
-                        ## Grab Random Creature
-                        ## Subtract XP from spendable XP
-                        ## If spendable XP > 10*(num_enemies-i)
-                            ## append creature
-                        ## else
-                            ## add XP to spendable XP
-                            ## retry
-        
-
 
         ## Make sure we are close enough to XP cap and at the right size
         ## If not, try again
