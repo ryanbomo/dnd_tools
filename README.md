@@ -26,12 +26,18 @@ Below are the projected features for the DND Encounter Tool
 
 After running the code, calling ui() will start the user interface version of the program. Conversely, when it has been loaded into memory, if you know your parameters or want to script with this stuff, main() can be called and run without needing further user input.
 
+#### main()
 The main() function follows the following parameters:
 main(*encounter\_difficulty*, *party\_size*,*party\_levels*,*csv\_name*,*report\_name*)
+
 **encounter\_difficulty** - takes an integer value between 1 and 4, 1 = Easy, 2 = Medium, 3 = Hard, 4 = Deadly
+
 **party\_size** - is an integer value for the size of the party
+
 **party\_levels** - is a list of the levels of each member of the party
+
 **csv\_name** - the name of the csv file **DO NOT INCLUDE .CSV**
+
 **report\_name** - string name of the encounter being generated
 
 Currently main() will give an output based on the party. This will be updated in the future to simply create a .txt file with the encounter information. The idea is to have no actual input or output from anything if ui() is not called.
