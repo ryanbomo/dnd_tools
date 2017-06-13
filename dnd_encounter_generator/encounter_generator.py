@@ -72,9 +72,10 @@ def sanitize_input(args):
     sanitary_arg.append(levels)
 
     #check csv_name
-    if not os.path.isfile(csv_name + ".csv"):
+    csv_name += ".csv"
+    if not os.path.isfile(csv_name):
         print("Error with csv filename")
-        print(csv_name + ".csv cannot be found.")
+        print(csv_name + " cannot be found.")
         sys.exit()
     sanitary_arg.append(csv_name)
 
@@ -114,7 +115,7 @@ def calc_encounter_xp(party_params):
 # get released.
 def create_creature_dictionary(file_name):
     creature_dict = {}
-    file_string = file_name + ".csv"
+    file_string = file_name
     with open(file_string) as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
