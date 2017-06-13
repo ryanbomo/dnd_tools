@@ -184,8 +184,58 @@ def determine_size_multiplier(num_enemies):
             multiplier = 4
         return multiplier
 
+
 def generate_enemy_party(num_enemies,allotted_xp,xp_multiplier,enemy_dictionary):
-    return ["t","e","s","t"]
+    passed_check = False
+    const_spendable_xp = int(allotted_xp/xp_multiplier)
+    print(const_spendable_xp)
+    print(allotted_xp)
+    print(num_enemies)
+    while not passed_check:
+        spent_xp = 0
+        enemy_team = []
+        spendable_xp = int(allotted_xp/xp_multiplier)
+        
+        # Currently grabs creatures at random, so you get some interesting groups
+        for i in range(num_enemies):
+            acceptable = False
+            while not acceptable:
+                rand_key = random.choice(list(enemy_dictionary.keys()))
+                print("Spendable XP is: " +str(spendable_xp))
+                spendable_xp -= int(enemy_dictionary[rand_key])
+                print("Rand key is: "+rand_key)
+                print("Enemy is " +enemy_dictionary[rand_key])
+                print("Spent XP is: " + str(spent_xp))
+                print("Team is: ")
+                print(enemy_team)
+                print("\n")
+                if spendable_xp>=(10*(num_enemies-i)):
+                    enemy_team.append(rand_key)
+                    spent_xp += int(enemy_dictionary[rand_key])
+                    acceptable = True
+                else:
+                    spendable_xp += int(enemy_dictionary[rand_key])
+                    
+
+
+                    ##For each creature in number of slots:
+                    
+                        ## Grab Random Creature
+                        ## Subtract XP from spendable XP
+                        ## If spendable XP > 10*(num_enemies-i)
+                            ## append creature
+                        ## else
+                            ## add XP to spendable XP
+                            ## retry
+        
+
+
+        ## Make sure we are close enough to XP cap and at the right size
+        ## If not, try again
+        if (spent_xp > (.8*const_spendable_xp)) and (num_enemies == len(enemy_team)):
+            passed_check = True
+    
+    return enemy_team
     
     
 
