@@ -54,4 +54,6 @@ Below is an example output for iteration 1:
   * Cluster Enemy Generation - instead of grabbing random singletons, implement a way to attempt groups
   * Link enemies based on themes or tags - Allow for more flavorful group creation
   * Ensure set up is actually possible - some setups don't work. For example, there is no possibly way to create a 15 creature encounter that is easy for 2 level 1 players. Need a way to weed these out.
+  * The DMG has player party size considerations that I would like to implement \[DMG 83\]
+  * Current implementation isn't correct per the DMG. The table from DMG 82 is implemented as if the values listed are the ceiling for that encounter. The underlying assumption was that something falling between the numbers for Easy and Medium was a Medium encounter. In reality, this is an Easy encounter. This is a MAJOR flaw, as we are not hitting the appropriate user function.
 
