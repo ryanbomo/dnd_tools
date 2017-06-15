@@ -39,11 +39,14 @@ def add_rooms(blank_map,attempts):
     # This numer will probably be user customizable in the future
     max_room_height = int(.4*map_height)
     max_room_width = int(.4*map_width)
-
-    list_of_taken_coords = []
-
+    if max_room_height > 20:
+        max_room_height = 20
+    if max_room_width >20:
+        max_room_width = 20
+    
     #for each attempt, create a room and try to place it
     taken_coords = []  # contains all coords that are already "room"
+    room_number = 1
     for i in range(attempts):
         #create a room
         room_height = random.randint(2,max_room_height)
@@ -77,10 +80,11 @@ def add_rooms(blank_map,attempts):
                 for j in range(room_width):
                     place_x = j+X_coord
                     place_y = i+Y_coord
-                    blank_map[place_y][place_x] = "R"
+                    blank_map[place_y][place_x] = room_number
             # And add the coordinates to the list of occupied coordinates
             for i in tested_coords:
                 taken_coords.append(i)
+            room_number+=1
     # Send back that now not so blank map
     return blank_map
 
@@ -93,7 +97,10 @@ def export_map(hallway_map):
     for i in hallway_map:
         row = ""
         for j in i:
-            row += j
+            if j != "X":
+                row+=" "
+            else:
+                row += j
         print(row)
 
-main([22,25],10)
+main([22,25],200)
