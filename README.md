@@ -63,7 +63,17 @@ Older outputs are in the sample output folders
 
 ## Map Generator
 
-Still a WIP. Once a preliminary version is working, this will be uploaded
+### Current Features
+  * Takes an input grid size i.e. [22,25] and number of attempts to make
+  * Outputs a map with that grid size and randomly place rooms of random size
+
+### Current Version (0.1)
+  * Able to take input at main in format main(*dimsion_list*,*room_attempts*)
+  * Outputs an ascii room
+
+Example Output for v0.2
+
+![Alt text](https://github.com/ryanbomo/dnd_tools/blob/master/dnd_map_generator/sample_output/version_0_2.png?raw=true)
 
 ### Future Features
   * Procedurally Generate Maps using different types - Cave, Castle, Maze, Forest, etc.
