@@ -69,7 +69,9 @@ Older outputs are in the sample output folders
 
 ### Current Version (0.1)
   * Able to take input at main in format main(*dimsion_list*,*room_attempts*)
-  * Outputs an ascii room
+  * Capable of avoiding overlapping rooms
+  * Does not avoid rooms being directly adjacent, causing some issues with map appearance
+  * Outputs an ascii map where X is solid and R is open air
 
 Example Output for v0.2
 
