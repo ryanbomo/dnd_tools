@@ -73,9 +73,9 @@ Older outputs are in the sample output folders
   * Does not avoid rooms being directly adjacent, causing some issues with map appearance
   * Outputs an ascii map where X is solid and R is open air
 
-Example Output for v0.2
+Example Output for v0.1
 
-![Alt text](https://github.com/ryanbomo/dnd_tools/blob/master/dnd_map_generator/sample_output/version_0_2.png?raw=true)
+![Alt text](https://github.com/ryanbomo/dnd_tools/blob/master/dnd_map_generator/sample_output/version_0_1.png?raw=true)
 
 ### Future Features
   * Procedurally Generate Maps using different types - Cave, Castle, Maze, Forest, etc.
