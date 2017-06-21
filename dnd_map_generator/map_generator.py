@@ -29,6 +29,10 @@ def create_blank_map(map_dimensions):
 # Add rooms to the map using random behavior
 # Future implementations will hopefully be able to seed the behavior and use
 # room shapes other than rectangle
+# Map Square values are X, R, or W.
+#   X is a solid space
+#   R is an open space
+#   W is a wall space.  Wall spaces are open, but have a solid wall on the border between the W and the X
 def add_rooms(blank_map,attempts):
     #get map dimensions
     map_height = len(blank_map)
@@ -48,9 +52,21 @@ def add_rooms(blank_map,attempts):
     taken_coords = []  # contains all coords that are already "room"
     room_number = 1
     for i in range(attempts):
+        room = []
         #create a room
         room_height = random.randint(2,max_room_height)
         room_width = random.randint(2,max_room_width)
+        for i in range(room_height):
+            room.append([])
+            if i == 0 or i == room_height-1:
+                for j in range(room_width):
+                    room[i].append("W")
+            else:
+                for j in range(room_width):
+                    if j ==0 or j ==room_width-1:
+                        room[i].append("W")
+                    else:
+                        room[i].append("R")
 
         #get random spot to place
         max_Y = map_height - room_height
@@ -80,7 +96,7 @@ def add_rooms(blank_map,attempts):
                 for j in range(room_width):
                     place_x = j+X_coord
                     place_y = i+Y_coord
-                    blank_map[place_y][place_x] = room_number
+                    blank_map[place_y][place_x] = room[i][j]
             # And add the coordinates to the list of occupied coordinates
             for i in tested_coords:
                 taken_coords.append(i)
@@ -89,6 +105,10 @@ def add_rooms(blank_map,attempts):
     return blank_map
 
 def add_halls(roomed_map):
+    #get map dimensions
+    map_height = len(roomed_map)
+    map_width = len(roomed_map[0])
+    
     # To be implemented
     return roomed_map
 
@@ -98,9 +118,9 @@ def export_map(hallway_map):
         row = ""
         for j in i:
             if j != "X":
-                row+=" "
+                row+= j
             else:
                 row += j
         print(row)
 
-main([22,25],200)
+main([22,25],20)
