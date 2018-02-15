@@ -118,7 +118,7 @@ def export_map(hallway_map):
         row = ""
         for j in i:
             if j != "X":
-                row+= j
+                row+= " "
             else:
                 row += j
         print(row)
