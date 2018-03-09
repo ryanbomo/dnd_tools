@@ -16,6 +16,12 @@ public class DND_tools {
      */
     public static void main(String[] args) {
         // TODO code application logic here
+        int x = 23;
+        int y = 26;
+        Map newMap = new Map(x,y);
+        newMap.tiles[1][2].isSolid = false;
+        newMap.drawMap();
+        
     }
     
 }

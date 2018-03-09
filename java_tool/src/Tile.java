@@ -12,9 +12,23 @@ package dnd_tools;
 public class Tile {
     Boolean isSolid;
     String[] contains;
+    String textValue;
     
     public Tile(){
-        
+        isSolid = true;
+    }
+    
+    public String getText(){
+        updateTextValue();
+        return textValue;
+    }
+    
+    public void updateTextValue(){
+        if (isSolid){
+            textValue = "[X]";
+        }else{
+            textValue = "[ ]";
+        }
     }
     
 }

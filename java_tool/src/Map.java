@@ -19,11 +19,12 @@ public class Map {
     public Map(int X, int Y){
         mapX = X;
         mapY = Y;
-    }
-    
-    public void blankMap(){
-        //Create All tiles
-        //set each tile to isSold = True
+        tiles = new Tile[mapY][mapX];
+        for(int i = 0; i < mapX;i++){
+            for(int j = 0;j<mapY;j++){
+                tiles[j][i] = new Tile();
+            }
+        }
     }
     
     public void makeRooms(){
@@ -42,7 +43,50 @@ public class Map {
         
     }
     
+    public int[][] returnMap(){
+        int[][] map = new int[mapY][mapX];
+        int lilx = 0;
+        int lily = 0;
+        for (Tile[] i : tiles){
+            for (Tile j : i){
+                if (j.isSolid){
+                    map[lily][lilx] = 1;
+                }else{
+                    map[lily][lilx] = 0;
+                }
+                lilx++;
+            }
+            lily++;
+            lilx = 0;
+        }
+        return map;
+    }
+    
     public void drawMap(){
+        int x = 0,y = 0;
+        String topLine = " ";
+        while (x<mapX){
+            if (x<10){
+                topLine = topLine +"  "+ x;
+            }else{
+                topLine = topLine + " " +x;
+            }
+            x++;
+        }
+        System.out.println(topLine);
+        
+        for (Tile[] i : tiles){
+            String count = ""+y;
+            if (y<10){
+                count = " " + count;
+            }
+            String output = count;
+            for (Tile j : i){
+                output = output + j.getText();
+            }
+            System.out.println(output);
+            y++;
+        }
         
     }
     
