@@ -17,9 +17,10 @@ public class DND_tools {
     public static void main(String[] args) {
         // TODO code application logic here
         int x = 23;
-        int y = 26;
+        int y = 20;
         Map newMap = new Map(x,y);
-        newMap.tiles[1][2].isSolid = false;
+        int[][] map = newMap.getMap();
+        newMap.makeRooms(15);
         newMap.drawMap();
         
     }

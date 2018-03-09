@@ -10,12 +10,15 @@ package dnd_tools;
  * @author ryanbomo
  */
 public class Tile {
-    Boolean isSolid;
-    String[] contains;
+    String type;
     String textValue;
     
     public Tile(){
-        isSolid = true;
+        
+    }
+    
+    public Tile(String nodeType){
+        type = nodeType;
     }
     
     public String getText(){
@@ -24,11 +27,21 @@ public class Tile {
     }
     
     public void updateTextValue(){
-        if (isSolid){
-            textValue = "[X]";
+        if (type == "solid"){
+            textValue = "X";
         }else{
-            textValue = "[ ]";
+            textValue = " ";
         }
+    }
+    
+    public String[] gridTextOut(){
+        String[] grid = new String[3];
+        grid[0] = "+-+";
+        grid[1] = "|" + textValue +"|";
+        grid[2] = "+-+";
+        
+        
+        return grid;
     }
     
 }
